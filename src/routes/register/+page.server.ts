@@ -1,27 +1,28 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../../prisma/prisma"
 import type { Actions } from "./$types";
 
 /** @type {import('./$types').Actions} */
 export const actions: Actions = {
     register: async ({request}) => {
         //TODO: 登録処理を記述する
-        const prisma = new PrismaClient();
         const data = await request.formData();
-        const userName = data.get("name")?.toString()
-
-        const result = await prisma.user.create({
+        const name = data.get("name")?.toString();
+        const password = data.get("password")?.toString();
+        
+        if (!name || !password) {
+            return {
+                message: "名前とパスワードは必須入力です"
+            }
+        }
+        await prisma.user.create({
             data: {
-                name: userName ?? "noName",
+                name,
+                password,
                 created_at: new Date(),
                 updated_at: new Date(),
             },
         })
-        .catch((e) => {
-            throw e;
-        })
-        .finally(async () => {
-            await prisma.$disconnect();
-        })
-        console.log("result:", result);
+
+        await prisma.$disconnect();
     }
 }
