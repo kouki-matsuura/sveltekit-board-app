@@ -1,14 +1,14 @@
 <script lang="ts">
-    import {useNavigate} from "svelte-navigator";
-    export let form : any;
+    import type {ActionData} from './$types';
+
+    export let form: ActionData
 </script>
 
 <h1>ログイン画面</h1>
-{#if form?.errorMessage}
-    {form?.errorMessage}
+{#if form?.message}
+    {form.message}
 {/if}
-<p></p>
-<form method="POST">
+<form method="POST" action="?/login">
     <label>名前:
         <input name="name" type="text" />
     </label>
@@ -16,6 +16,6 @@
         パスワード：
         <input name="password" type="password" />
     </label>
-    <button>登録する</button>
+    <button>ログイン</button>
 </form>
 

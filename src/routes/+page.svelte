@@ -1,2 +1,11 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+
+    import Login from "./login/+page.svelte";
+    import MyPage from "./myPage/+page.svelte";
+    import Register from "./register/+page.svelte";
+</script>
+<main>
+
+   <h1>aaa</h1>
+
+</main>

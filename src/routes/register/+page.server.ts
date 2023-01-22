@@ -1,28 +1,39 @@
-import { prisma } from "../../../prisma/prisma"
+import { fail, redirect } from "@sveltejs/kit";
+import { db } from "$lib/prisma";
 import type { Actions } from "./$types";
+import bcrypt from 'bcrypt'
+import { Roles } from "$lib/constants";
 
-/** @type {import('./$types').Actions} */
+
 export const actions: Actions = {
-    register: async ({request}) => {
-        //TODO: 登録処理を記述する
+    register : async ({request}) => {
         const data = await request.formData();
-        const name = data.get("name")?.toString();
-        const password = data.get("password")?.toString();
+        const name = data.get("name");
+        const password = data.get("password");
         
-        if (!name || !password) {
-            return {
-                message: "名前とパスワードは必須入力です"
-            }
+        if (typeof name !== "string" ||typeof password !== "string" || !name || !password) {
+            return fail(400, { invalid: true })
         }
-        await prisma.user.create({
+
+        const user = await db.user.findUnique({
+            where: {name}
+        })
+
+        if (user) {
+            return fail(400, { invalid: true })
+        }
+        
+        await db.user.create({
             data: {
                 name,
-                password,
-                created_at: new Date(),
-                updated_at: new Date(),
+                password : await bcrypt.hash(password, 10),
+                authToken: crypto.randomUUID(),
+                role: { connect: { name: Roles.USER}}
             },
         })
 
-        await prisma.$disconnect();
+        await db.$disconnect();
+
+        throw redirect(303, '/login')
     }
 }
