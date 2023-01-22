@@ -1,44 +1,50 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  shadowDatabaseUrl= env("SHADOW_DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  name       String
+  id         String    @id @default(uuid())
+  name       String    @unique
   password   String
-  created_at DateTime
-  updated_at DateTime
-  Post       Post[]
+  authToken  String    @unique
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  roleId     Int
   Comment    Comment[]
+  Post       Post[]
+  role       Roles     @relation(fields: [roleId], references: [id])
+}
+
+model Roles {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  User User[]
 }
 
 model Post {
   id         Int       @id @default(autoincrement())
-  user       User      @relation(fields: [userId], references: [id])
-  userId     Int
+  userId     String
   title      String
   content    String
   created_at DateTime
   updated_at DateTime
   Comment    Comment[]
+  user       User      @relation(fields: [userId], references: [id])
 }
 
 model Comment {
   id         Int      @id @default(autoincrement())
-  user       User     @relation(fields: [userId], references: [id])
-  userId     Int
-  post       Post     @relation(fields: [postId], references: [id])
+  userId     String
   postId     Int
   content    String
   created_at DateTime
   updated_at DateTime
+  post       Post     @relation(fields: [postId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 }
