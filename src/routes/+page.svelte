@@ -1,11 +1,14 @@
-<script>
+<script lang="ts">
+    import {goto} from "$app/navigation";
+	import type { PageData } from "./$types";
 
-    import Login from "./login/+page.svelte";
-    import MyPage from "./myPage/+page.svelte";
-    import Register from "./register/+page.svelte";
+
+    export let data: PageData
+    console.log("data:", data)
 </script>
 <main>
+   <h1>スレッド一覧</h1>
+    <button type="button"  on:click={() => goto("/post")}>投稿する</button>
 
-   <h1>aaa</h1>
-
+    
 </main>
