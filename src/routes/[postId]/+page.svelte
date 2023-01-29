@@ -1,6 +1,8 @@
 <script lang="ts">
     import type { PageData } from "./$types";
+    import type { ActionData } from "./comment/$types";
     export let data: PageData
+    export let form: ActionData
 </script>
 <div>
     <a href="/"> ＜ 一覧に戻る</a>
@@ -15,9 +17,13 @@
     <div>内容：{comment.content}</div>
     <br />
 {/each}
-
-<form method="POST" action="/{data.threadDetail?.id}/comment?/comment">
-    <input name="comment" type="text" required />
+<div>
+    {#if form?.message}
+        {form?.message}
+    {/if}
+</div>
+<form method="POST" action="?/comment">
+    <input name="comment" type="text" />
     <button>コメントする</button>
 </form>
 
